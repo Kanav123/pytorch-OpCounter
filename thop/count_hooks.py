@@ -119,3 +119,16 @@ def count_linear(m, x, y):
 	total_ops = (total_mul + total_add) * num_elements
 
 	m.total_ops += torch.Tensor([int(total_ops)])
+
+
+def count_lstm(m, x, y):
+    total_ops = 0
+    for param in m.parameters():
+        if len(param.shape) == 2:
+            a,b = param.size()
+            print(param.size())
+            total_ops += y[0][0].size()[0] * a * (2*b - 1)
+        else:
+            a = param.size()[0]
+            total_ops += y[0][0].size()[0] *a
+    m.total_ops += torch.Tensor([int(total_ops)])

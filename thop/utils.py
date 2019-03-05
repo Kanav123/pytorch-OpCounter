@@ -2,7 +2,7 @@ import logging
 
 import torch
 import torch.nn as nn
-from .count_hooks import *
+from count_hooks import *
 
 register_hooks = {
 	nn.Conv2d: count_conv2d,
@@ -18,6 +18,7 @@ register_hooks = {
 	nn.AvgPool3d: count_avgpool,
 	nn.Linear: count_linear,
 	nn.Dropout: None,
+	torch.nn.modules.rnn.LSTM: count_lstm,
 }
 
 
@@ -60,7 +61,7 @@ def profile(model, input_size, custom_ops={}, quiet=False):
 	model.eval()
 	model.apply(add_hooks)
 
-	x = torch.zeros(input_size)
+	x = torch.zeros(input_size).cuda()
 	model(x)
 
 	total_ops = 0
